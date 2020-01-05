@@ -1,15 +1,10 @@
-import net.rahka.parameters.CollectionFlag;
-import net.rahka.parameters.ConsumerFlag;
-import net.rahka.parameters.FunctionFlag;
-import net.rahka.parameters.NonMatchingArgumentException;
-import net.rahka.parameters.ParameterInterpretation;
-import net.rahka.parameters.ParameterInterpreter;
-import net.rahka.parameters.RunnableFlag;
-import net.rahka.parameters.SupplierFlag;
+import net.rahka.parameters.*;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.mockito.Mockito.*;
@@ -24,7 +19,7 @@ public class FlagTest {
                 new FunctionFlag<>("Test name", "t", "Test description", function)
         );
 
-        interpreter.interpret(new String[] {"-t", "testinput"});
+        interpreter.interpret(new String[]{"-t", "testinput"});
         verify(function, times(1)).parse("testinput");
     }
 
@@ -36,7 +31,7 @@ public class FlagTest {
                 new ConsumerFlag("Test name", "t", "Test description", consumer)
         );
 
-        interpreter.interpret(new String[] {"-t", "testinput"});
+        interpreter.interpret(new String[]{"-t", "testinput"});
         verify(consumer, times(1)).consume("testinput");
     }
 
@@ -48,7 +43,7 @@ public class FlagTest {
                 new RunnableFlag("Test name", "t", "Test description", runnable)
         );
 
-        interpreter.interpret(new String[] {"-t"});
+        interpreter.interpret(new String[]{"-t"});
         verify(runnable, times(1)).run();
     }
 
@@ -60,12 +55,12 @@ public class FlagTest {
                 new SupplierFlag<>("Test name", "t", "Test description", supplier)
         );
 
-        interpreter.interpret(new String[] {"-t"});
+        interpreter.interpret(new String[]{"-t"});
         verify(supplier, times(1)).supply();
     }
 
     @Test
-    public void collectionFlag_mapsItems() throws Exception {
+    public void collectionFlag_mapsItems() {
         List<TestObj> collection = Arrays.asList(
                 new TestObj("test1"),
                 new TestObj("test2"),
@@ -78,37 +73,84 @@ public class FlagTest {
                 new CollectionFlag<>("Test name 2", "t4", "Test description", collection)
         );
 
-        ParameterInterpretation interpretation = interpreter.interpret(new String[] {"-t2", "test2", "-t4", "test4"});
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-t2", "test2", "-t4", "test4"});
+        assertEquals(collection.get(1), interpretation.get("Test name 1"));
+        assertEquals(collection.get(3), interpretation.get("Test name 2"));
+    }
+
+    @Test
+    public void mapFlag_mapsItems() {
+        Map<TestObj, Integer> map = new HashMap<>();
+
+        TestObj obj2 = new TestObj("test2");
+        TestObj obj4 = new TestObj("test4");
+
+        map.put(new TestObj("test1"), 1);
+        map.put(obj2, 2);
+        map.put(new TestObj("test3"), 3);
+        map.put(obj4, 4);
+        map.put(new TestObj("test5"), 5);
+
+        ParameterInterpreter interpreter = new ParameterInterpreter(
+                new MapFlag<>("Test name 1", "t2", "Test description", map),
+                new MapFlag<>("Test name 2", "t4", "Test description", map)
+        );
+
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-t2", "test2", "-t4", "test4"});
+        assertEquals(map.get(obj2), interpretation.get("Test name 1"));
+        assertEquals(map.get(obj4), interpretation.get("Test name 2"));
+    }
+
+
+    @Test(expected = NonMatchingArgumentException.class)
+    public void collectionFlag_throwsNonMatchingArgumentException_whenNonMatchingArgumentIsSupplied() {
+        List<TestObj> collection = Arrays.asList(
+                new TestObj("test1"),
+                new TestObj("test2"),
+                new TestObj("test3"),
+                new TestObj("test4"),
+                new TestObj("test5"));
+
+        ParameterInterpreter interpreter = new ParameterInterpreter(
+                new CollectionFlag<>("Test name 1", "t2", "Test description", collection),
+                new CollectionFlag<>("Test name 2", "t4", "Test description", collection)
+        );
+
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-t2", "test2", "-t4", "test0"});
         assertEquals(collection.get(1), interpretation.get("Test name 1"));
         assertEquals(collection.get(3), interpretation.get("Test name 2"));
     }
 
     @Test(expected = NonMatchingArgumentException.class)
-    public void collectionFlag_throwsNonMatchingArgumentException_whenNonMatchingArgumentIsSupplied() throws Exception {
-        List<TestObj> collection = Arrays.asList(
-                new TestObj("test1"),
-                new TestObj("test2"),
-                new TestObj("test3"),
-                new TestObj("test4"),
-                new TestObj("test5"));
+    public void mapFlag_throwsNonMatchingArgumentException_whenNonMatchingArgumentIsSupplied() {
+        Map<TestObj, Integer> map = new HashMap<>();
+
+        TestObj obj2 = new TestObj("test2");
+        TestObj obj4 = new TestObj("test4");
+
+        map.put(new TestObj("test1"), 1);
+        map.put(obj2, 2);
+        map.put(new TestObj("test3"), 3);
+        map.put(obj4, 4);
+        map.put(new TestObj("test5"), 5);
 
         ParameterInterpreter interpreter = new ParameterInterpreter(
-                new CollectionFlag<>("Test name 1", "t2", "Test description", collection),
-                new CollectionFlag<>("Test name 2", "t4", "Test description", collection)
+                new MapFlag<>("Test name 1", "t2", "Test description", map),
+                new MapFlag<>("Test name 2", "t4", "Test description", map)
         );
 
-        ParameterInterpretation interpretation = interpreter.interpret(new String[] {"-t2", "test2", "-t4", "test0"});
-        assertEquals(collection.get(1), interpretation.get("Test name 1"));
-        assertEquals(collection.get(3), interpretation.get("Test name 2"));
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-t2", "test2", "-t4", "test0"});
+        assertEquals(map.get(obj2), interpretation.get("Test name 1"));
+        assertEquals(map.get(obj4), interpretation.get("Test name 2"));
     }
 
     private static class TestObj {
 
+        private String argument;
+
         public TestObj(String argument) {
             this.argument = argument;
         }
-
-        private String argument;
 
         @Override
         public String toString() {

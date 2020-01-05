@@ -1,12 +1,4 @@
-import net.rahka.parameters.ExceptionCaughtException;
-import net.rahka.parameters.Flag;
-import net.rahka.parameters.FunctionFlag;
-import net.rahka.parameters.MissingArgumentException;
-import net.rahka.parameters.MissingFlagException;
-import net.rahka.parameters.ParameterInterpretation;
-import net.rahka.parameters.ParameterInterpreter;
-import net.rahka.parameters.RunnableFlag;
-import net.rahka.parameters.SupplierFlag;
+import net.rahka.parameters.*;
 import org.junit.Test;
 
 import static junit.framework.TestCase.*;
@@ -22,7 +14,7 @@ public class InterpreterTest {
                 new FunctionFlag<>("Integer flag", "i", "Flag description", Integer::parseInt)
         );
 
-        interpreter.interpret(new String[] {"-s", "-i"});
+        interpreter.interpret(new String[]{"-s", "-i"});
     }
 
     @Test(expected = MissingFlagException.class)
@@ -32,30 +24,34 @@ public class InterpreterTest {
                 new FunctionFlag<>("Integer flag", "i", "Flag description", Integer::parseInt)
         );
 
-        interpreter.interpret(new String[] {"-i", "4"});
+        interpreter.interpret(new String[]{"-i", "4"});
     }
 
     @Test(expected = ExceptionCaughtException.class)
     public void interpret_throwsExceptionCaughtException_whenParsingThrowsException() {
-        RunnableFlag.Runnable runnable = () -> {throw new TestException();};
+        RunnableFlag.Runnable runnable = () -> {
+            throw new TestException();
+        };
 
         interpreter = new ParameterInterpreter(
                 new RunnableFlag("Runnable flag", "i", "Flag description", runnable)
         );
 
-        interpreter.interpret(new String[] {"-i"});
+        interpreter.interpret(new String[]{"-i"});
     }
 
     @Test(expected = TestException.class)
     public void interpret_throwsExceptionCaughtException_withCorrectCause() throws Throwable {
-        RunnableFlag.Runnable runnable = () -> {throw new TestException();};
+        RunnableFlag.Runnable runnable = () -> {
+            throw new TestException();
+        };
 
         interpreter = new ParameterInterpreter(
                 new RunnableFlag("Runnable flag", "i", "Flag description", runnable)
         );
 
         try {
-            interpreter.interpret(new String[] {"-i"});
+            interpreter.interpret(new String[]{"-i"});
         } catch (ExceptionCaughtException e) {
             throw e.getCause();
         }
@@ -68,7 +64,7 @@ public class InterpreterTest {
                 new SupplierFlag<>("name", "n", "Flag description", () -> true)
         );
 
-        ParameterInterpretation interpretation = interpreter.interpret(new String[] {"-n"});
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-n"});
 
         assertEquals(true, interpretation.get("name"));
         assertNull(interpretation.get("number"));
@@ -84,7 +80,7 @@ public class InterpreterTest {
                 new FunctionFlag<>("boolean", "bool", "Flag description", Boolean::parseBoolean, true)
         );
 
-        ParameterInterpretation interpretation = interpreter.interpret(new String[] {"4", "-f" , "9.2", "5", "true"});
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"4", "-f", "9.2", "5", "true"});
 
         assertEquals(4, interpretation.get("int"));
         assertEquals(5, interpretation.get("int2"));
@@ -100,7 +96,7 @@ public class InterpreterTest {
                 new SupplierFlag<>("ok", "k", "Flag description", () -> 44)
         );
 
-        ParameterInterpretation interpretation = interpreter.interpret(new String[] {"-n", "-k"});
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-n", "-k"});
 
         assertNull(interpretation.get("number"));
         assertNull(interpretation.get("nonexisting"));
@@ -115,7 +111,7 @@ public class InterpreterTest {
                 new SupplierFlag<>("ok", "k", "Flag description", () -> 44)
         );
 
-        ParameterInterpretation interpretation = interpreter.interpret(new String[] {"-k"});
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-k"});
 
         assertEquals(4, (int) interpretation.get("number", 4));
         assertNull(interpretation.get("nonexisting", null));
@@ -129,7 +125,7 @@ public class InterpreterTest {
                 new SupplierFlag<>("name", "a", "Flag description", () -> 1)
         );
 
-        ParameterInterpretation interpretation = interpreter.interpret(new String[] {"-a"});
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-a"});
 
         assertFalse(interpretation.has("number"));
         assertFalse(interpretation.has("nonexistant"));
@@ -142,7 +138,7 @@ public class InterpreterTest {
                 new SupplierFlag<>("name", "a", "Flag description", () -> 1)
         );
 
-        ParameterInterpretation interpretation = interpreter.interpret(new String[] {"-a", "-n"});
+        ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-a", "-n"});
 
         assertTrue(interpretation.has("name"));
         assertTrue(interpretation.has("number"));
