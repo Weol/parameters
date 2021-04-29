@@ -23,11 +23,12 @@ public class ParameterInterpretation {
      * Returns the parsed value of a parameter if the parameter is present. Returns null if no matching flag is present
      * or in cases where a flag has parsed its argument to null for some reason. Use {@link #has(String)} before
      * calling this or use the {@link #get(String, Object)} in order to avoid this.
-     * <p>
-     * The returned object must be casted into whatever type it is expected to be in.
+     *
+     * @throws ClassCastException if the parsed object cannot be cast to the inferred type
      */
-    public Object get(String name) {
-        return flags.get(name);
+    @SuppressWarnings("unchecked")
+    public <T> T get(String name) {
+        return (T) flags.get(name);
     }
 
     /**

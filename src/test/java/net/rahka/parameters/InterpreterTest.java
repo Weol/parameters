@@ -1,4 +1,5 @@
-import net.rahka.parameters.*;
+package net.rahka.parameters;
+
 import org.junit.Test;
 
 import static junit.framework.TestCase.*;
@@ -57,6 +58,18 @@ public class InterpreterTest {
         }
     }
 
+    @Test(expected = ClassCastException.class)
+    public void interpret_throwsClassCastException_whenTryingToCastToDifferentObject() throws Throwable {
+        FunctionFlag.Function<Integer> function = (String s) -> 1;
+
+        interpreter = new ParameterInterpreter(
+                new FunctionFlag<>("Function flag", "i", "Flag description", function)
+        );
+
+        var interpretation = interpreter.interpret(new String[]{"-i", "asd"});
+        boolean asd = interpretation.get("Function flag");
+    }
+
     @Test
     public void interpreter_lastAddedFlagIsUsed_whenFlagsWithDuplicateNamesAreSupplied() {
         interpreter = new ParameterInterpreter(
@@ -66,7 +79,7 @@ public class InterpreterTest {
 
         ParameterInterpretation interpretation = interpreter.interpret(new String[]{"-n"});
 
-        assertEquals(true, interpretation.get("name"));
+        assertTrue(interpretation.get("name"));
         assertNull(interpretation.get("number"));
     }
 
@@ -82,10 +95,10 @@ public class InterpreterTest {
 
         ParameterInterpretation interpretation = interpreter.interpret(new String[]{"4", "-f", "9.2", "5", "true"});
 
-        assertEquals(4, interpretation.get("int"));
-        assertEquals(5, interpretation.get("int2"));
+        assertEquals(4, (int) interpretation.get("int"));
+        assertEquals(5, (int) interpretation.get("int2"));
         assertEquals(9.2f, interpretation.get("float"));
-        assertEquals(true, interpretation.get("boolean"));
+        assertTrue(interpretation.get("boolean"));
     }
 
     @Test
@@ -100,7 +113,7 @@ public class InterpreterTest {
 
         assertNull(interpretation.get("number"));
         assertNull(interpretation.get("nonexisting"));
-        assertEquals(44, interpretation.get("ok"));
+        assertEquals(44, (int) interpretation.get("ok"));
     }
 
     @Test

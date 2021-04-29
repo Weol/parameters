@@ -1,4 +1,5 @@
-import net.rahka.parameters.*;
+package net.rahka.parameters;
+
 import org.junit.Test;
 
 import java.util.Arrays;
