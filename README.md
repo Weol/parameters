@@ -18,9 +18,9 @@ ParameterInterpretation interpretation = interpreter.interpret(args);
 Heuristic blackHeuristic = interpretation.get("blackHeuristic", new SimpleHeuristic());
 Heuristic whiteHeuristic = interpretation.get("whiteHeuristic", new SimpleHeuristic());
 
-Agent blackAgentHolder = (Agent) interpretation.get("black");
-Agent whiteAgentHolder = (Agent) interpretation.get("white");
+Agent blackAgentHolder = interpretation.get("black");
+Agent whiteAgentHolder = interpretation.get("white");
 
 int depthLimit = interpretation.get("depthlimit", 4);
-int games = (int) interpretation.get("number");
+int games = interpretation.get("number");
 ```
