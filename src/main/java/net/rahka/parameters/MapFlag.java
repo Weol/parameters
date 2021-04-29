@@ -15,7 +15,7 @@ public class MapFlag<T> extends Flag {
     /**
      * A map of key that this flag can have as an argument and their corresponding values.
      */
-    private Map<?, T> map;
+    private final Map<?, T> map;
 
     /**
      * @param name        the name of flag

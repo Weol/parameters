@@ -23,10 +23,10 @@ import java.util.*;
  */
 public class ParameterInterpreter {
 
-    private HashMap<String, Flag> flags;
-    private LinkedList<Flag> required;
+    private final HashMap<String, Flag> flags;
+    private final LinkedList<Flag> required;
 
-    private String prefix;
+    private final String prefix;
 
     /**
      * Constructs a new ParameterInterpreter that will check and parse the supplied flags. The prefix parameter decides

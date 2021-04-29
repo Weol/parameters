@@ -147,7 +147,7 @@ public class FlagTest {
 
     private static class TestObj {
 
-        private String argument;
+        private final String argument;
 
         public TestObj(String argument) {
             this.argument = argument;

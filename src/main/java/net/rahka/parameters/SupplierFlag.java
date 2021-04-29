@@ -8,7 +8,7 @@ package net.rahka.parameters;
  */
 public class SupplierFlag<T> extends Flag {
 
-    private Supplier<T> supplier;
+    private final Supplier<T> supplier;
 
     /**
      * @param name        the name of the flag

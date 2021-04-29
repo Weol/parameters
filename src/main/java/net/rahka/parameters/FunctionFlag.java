@@ -9,7 +9,7 @@ package net.rahka.parameters;
  */
 public class FunctionFlag<T> extends Flag {
 
-    private Function<T> parser;
+    private final Function<T> parser;
 
     /**
      * @param name        the name of the flag

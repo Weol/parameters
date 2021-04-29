@@ -14,7 +14,7 @@ public class CollectionFlag<T> extends Flag {
     /**
      * A collection of values that this flag can have as an argument.
      */
-    private Collection<T> collection;
+    private final Collection<T> collection;
 
     /**
      * @param name        the name of flag

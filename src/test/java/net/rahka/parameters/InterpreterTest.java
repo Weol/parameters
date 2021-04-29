@@ -59,7 +59,7 @@ public class InterpreterTest {
     }
 
     @Test(expected = ClassCastException.class)
-    public void interpret_throwsClassCastException_whenTryingToCastToDifferentObject() throws Throwable {
+    public void interpret_throwsClassCastException_whenTryingToCastToDifferentObject() {
         FunctionFlag.Function<Integer> function = (String s) -> 1;
 
         interpreter = new ParameterInterpreter(

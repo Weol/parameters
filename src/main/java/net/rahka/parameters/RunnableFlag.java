@@ -9,7 +9,7 @@ package net.rahka.parameters;
  */
 public class RunnableFlag extends Flag {
 
-    private Runnable runnable;
+    private final Runnable runnable;
 
     /**
      * @param name        the name of the flag

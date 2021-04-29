@@ -13,24 +13,24 @@ public class Flag {
      * The name of the flag. This is the name that is used to retrieve the parsed argument from
      * {@link ParameterInterpretation}.
      */
-    private String name;
+    private final String name;
 
     /**
      * The short-hand name for this flag. This is what is usually used in the command line.
      * For example -f instead of --force
      */
-    private String flag;
+    private final String flag;
 
     /**
      * The description of this flag. This is used by the help command in order to tell the user what
      * this flag is.
      */
-    private String description;
+    private final String description;
 
     /**
      * Whether or not this flag is required (non-optional).
      */
-    private boolean required;
+    private final boolean required;
 
     /**
      * Package private because this should only be used by sub-classes. It makes no sense to have required flags of
@@ -66,8 +66,6 @@ public class Flag {
 
     /**
      * Parses this flag's argument and returns its parsed value
-     *
-     * @return
      */
     protected Object parseArgument(String arg) throws Exception {
         return null;

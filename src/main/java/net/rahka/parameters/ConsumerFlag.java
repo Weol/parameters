@@ -9,7 +9,7 @@ package net.rahka.parameters;
  */
 public class ConsumerFlag extends Flag {
 
-    private Consumer consumer;
+    private final Consumer consumer;
 
     /**
      * @param name        the name of the flag
